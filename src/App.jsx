@@ -131,7 +131,7 @@ export default function App() {
     const name = currentFilePath
       ? currentFilePath.split(/[\\/]/).pop()
       : 'untitled.qs';
-    window.electronAPI.setTitle(`${isDirty ? '● ' : ''}${name} — Quantum IDE`);
+    window.electronAPI.setTitle(`${isDirty ? '● ' : ''}${name} - Quantum IDE`);
   }, [currentFilePath, isDirty]);
 
   // ── Simulator actions ──
@@ -543,7 +543,7 @@ export default function App() {
           borderRight: `1px solid ${T.border.subtle}`,
           minWidth: 0,
         }}>
-          <PanelHeader label="EDITOR — Quantum Assembly" />
+          <PanelHeader label="EDITOR - Quantum Assembly" />
           <CodeEditor
             code={code}
             onChange={handleCodeChange}

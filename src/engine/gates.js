@@ -8,7 +8,7 @@
  *   | a  b |   applied to   | α |   =   | a·α + b·β |
  *   | c  d |                 | β |       | c·α + d·β |
  * 
- * No third-party libraries — all matrices defined by hand from
+ * No third-party libraries - all matrices defined by hand from
  * their mathematical definitions.
  */
 
@@ -17,49 +17,49 @@ const PI = Math.PI;
 
 // Single-Qubit Gates
 
-/** Hadamard — creates equal superposition */
+/** Hadamard - creates equal superposition */
 export const H = [
   [[S2, 0], [S2, 0]],
   [[S2, 0], [-S2, 0]],
 ];
 
-/** Pauli-X (NOT gate) — bit flip */
+/** Pauli-X (NOT gate) - bit flip */
 export const X = [
   [[0, 0], [1, 0]],
   [[1, 0], [0, 0]],
 ];
 
-/** Pauli-Y — bit + phase flip */
+/** Pauli-Y - bit + phase flip */
 export const Y = [
   [[0, 0], [0, -1]],
   [[0, 1], [0, 0]],
 ];
 
-/** Pauli-Z — phase flip */
+/** Pauli-Z - phase flip */
 export const Z = [
   [[1, 0], [0, 0]],
   [[0, 0], [-1, 0]],
 ];
 
-/** S gate (√Z) — π/2 phase */
+/** S gate (√Z) - π/2 phase */
 export const S = [
   [[1, 0], [0, 0]],
   [[0, 0], [0, 1]],
 ];
 
-/** S† (S-dagger) — -π/2 phase */
+/** S† (S-dagger) - -π/2 phase */
 export const SDG = [
   [[1, 0], [0, 0]],
   [[0, 0], [0, -1]],
 ];
 
-/** T gate (√S) — π/4 phase */
+/** T gate (√S) - π/4 phase */
 export const T = [
   [[1, 0], [0, 0]],
   [[0, 0], [Math.cos(PI / 4), Math.sin(PI / 4)]],
 ];
 
-/** T† (T-dagger) — -π/4 phase */
+/** T† (T-dagger) - -π/4 phase */
 export const TDG = [
   [[1, 0], [0, 0]],
   [[0, 0], [Math.cos(PI / 4), -Math.sin(PI / 4)]],
@@ -74,7 +74,7 @@ export const I = [
 // Parameterized Rotation Gates
 
 /**
- * RX(θ) — Rotation about X-axis
+ * RX(θ) - Rotation about X-axis
  * 
  *   | cos(θ/2)    -i·sin(θ/2) |
  *   | -i·sin(θ/2)  cos(θ/2)   |
@@ -89,7 +89,7 @@ export function RX(theta) {
 }
 
 /**
- * RY(θ) — Rotation about Y-axis
+ * RY(θ) - Rotation about Y-axis
  * 
  *   | cos(θ/2)  -sin(θ/2) |
  *   | sin(θ/2)   cos(θ/2) |
@@ -104,7 +104,7 @@ export function RY(theta) {
 }
 
 /**
- * RZ(θ) — Rotation about Z-axis
+ * RZ(θ) - Rotation about Z-axis
  * 
  *   | e^(-iθ/2)    0       |
  *   |    0       e^(iθ/2)  |

@@ -102,7 +102,7 @@ function Toolbar({
 
       <button
         onClick={onSave}
-        aria-label={isDirty ? "Save file — unsaved changes (Ctrl+S)" : "Save file (Ctrl+S)"}
+        aria-label={isDirty ? "Save file - unsaved changes (Ctrl+S)" : "Save file (Ctrl+S)"}
         title={currentFilePath ? "Save  (Ctrl+S)" : "Save As  (Ctrl+S)"}
         style={{
           ...btnGhost,
@@ -273,7 +273,7 @@ function Toolbar({
         ↪ Redo
       </button>
 
-      {/* Examples dropdown + palette toggle — right-aligned */}
+      {/* Examples dropdown + palette toggle - right-aligned */}
       <div style={{ marginLeft: "auto", display: "flex", alignItems: "center", gap: T.space[3] }}>
         <button
           onClick={onTogglePalette}

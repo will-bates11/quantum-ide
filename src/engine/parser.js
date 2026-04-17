@@ -6,7 +6,10 @@
  *
  * ─── Syntax ───────────────────────────────────────────
  *
- *   qubits N          Allocate N qubits (1-8). Auto-inferred if omitted.
+ *   qubits N          Allocate N qubits (1-16). Auto-inferred if omitted.
+ *                     Memory note: statevector uses 2^n complex values (~1 MB at n=16).
+ *                     Density matrix (noisy mode) uses 2^n x 2^n values (~256 MB at n=12);
+ *                     keep n <= 12 for noisy simulation.
  *   h Q               Hadamard on qubit Q
  *   x Q               Pauli-X (NOT) on qubit Q
  *   y Q               Pauli-Y on qubit Q
@@ -93,7 +96,7 @@ function parseAngle(str) {
  * Parameter names in `params` map to local qubit indices (0-based position).
  * Returns an instruction object, or null on failure.
  */
-function parseGateBodyLine(raw, params, lineNum) {
+function parseGateBodyLine(raw, params, lineNum, customGates = {}) {
   const parts = raw.split(/\s+/);
   const op = parts[0];
 
@@ -158,6 +161,17 @@ function parseGateBodyLine(raw, params, lineNum) {
     return { type: "cswap", qubits: [c, t1, t2], line: lineNum };
   }
 
+  if (customGates[op]) {
+    const def = customGates[op];
+    const qubits = [];
+    for (let k = 0; k < def.params.length; k++) {
+      const q = resolve(parts[k + 1]);
+      if (q < 0) return null;
+      qubits.push(q);
+    }
+    return { type: "custom_gate", name: op, qubits, line: lineNum };
+  }
+
   return null;
 }
 
@@ -196,7 +210,7 @@ export function parse(code) {
         const bodyRaw = lines[i].trim();
         if (bodyRaw.toLowerCase() === "end") break;
         if (bodyRaw && !bodyRaw.startsWith("#") && !bodyRaw.startsWith("//")) {
-          const bodyInst = parseGateBodyLine(bodyRaw.toLowerCase(), params, i);
+          const bodyInst = parseGateBodyLine(bodyRaw.toLowerCase(), params, i, customGates);
           if (bodyInst) {
             body.push(bodyInst);
           } else {
@@ -214,8 +228,8 @@ export function parse(code) {
     // ── Qubit allocation ──
     if (op === "qubits" || op === "qreg") {
       const n = parseInt(parts[1]);
-      if (isNaN(n) || n < 1 || n > 8) {
-        errors.push({ line: i, msg: `Invalid qubit count: must be 1-8` });
+      if (isNaN(n) || n < 1 || n > 16) {
+        errors.push({ line: i, msg: `Invalid qubit count: must be 1-16 (keep <= 12 for noisy/density-matrix mode)` });
         continue;
       }
       nQubits = n;

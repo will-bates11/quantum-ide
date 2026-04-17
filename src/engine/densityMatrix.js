@@ -48,7 +48,7 @@ export function applyGateDM(rho, gate, qubit, nQubits) {
   const g10c = [g10[0], -g10[1]];
   const g11c = [g11[0], -g11[1]];
 
-  // Step 1 — left multiply: temp = U · rho
+  // Step 1 - left multiply: temp = U · rho
   const temp = rho.map(row => row.map(c => [c[0], c[1]]));
   for (let i = 0; i < dim; i++) {
     if ((i >> q) & 1) continue;          // process each pair once (i0 = i)
@@ -60,7 +60,7 @@ export function applyGateDM(rho, gate, qubit, nQubits) {
     }
   }
 
-  // Step 2 — right multiply: result = temp · U†
+  // Step 2 - right multiply: result = temp · U†
   // (U†)[k][j] = conj(U[j][k])
   // result[i][j0] = temp[i][j0]·conj(g00) + temp[i][j1]·conj(g01)
   // result[i][j1] = temp[i][j0]·conj(g10) + temp[i][j1]·conj(g11)
@@ -110,7 +110,7 @@ export function applyControlledGate_DM(rho, gate, control, target, nQubits) {
   const g10c = [g10[0], -g10[1]];
   const g11c = [g11[0], -g11[1]];
 
-  // Left multiply — only act when control bit = 1
+  // Left multiply - only act when control bit = 1
   const temp = rho.map(row => row.map(c => [c[0], c[1]]));
   for (let i = 0; i < dim; i++) {
     if (!((i >> control) & 1)) continue;  // skip control=0 rows
@@ -123,7 +123,7 @@ export function applyControlledGate_DM(rho, gate, control, target, nQubits) {
     }
   }
 
-  // Right multiply — only act when control bit = 1
+  // Right multiply - only act when control bit = 1
   const result = temp.map(row => row.map(c => [c[0], c[1]]));
   for (let i = 0; i < dim; i++) {
     for (let j = 0; j < dim; j++) {
@@ -203,7 +203,7 @@ export function applyKraus(rho, krausOps, targetQubit, nQubits) {
 }
 
 /**
- * Depolarizing channel — equal probability of X, Y, Z errors.
+ * Depolarizing channel - equal probability of X, Y, Z errors.
  *   K0 = √(1-p)·I,  K1 = √(p/3)·X,  K2 = √(p/3)·Y,  K3 = √(p/3)·Z
  */
 export function depolarizingChannel(p) {
@@ -218,7 +218,7 @@ export function depolarizingChannel(p) {
 }
 
 /**
- * Amplitude damping channel — models energy relaxation (T1 decay).
+ * Amplitude damping channel - models energy relaxation (T1 decay).
  *   K0 = [[1,0],[0,√(1-γ)]],  K1 = [[0,√γ],[0,0]]
  */
 export function amplitudeDampingChannel(gamma) {
@@ -231,7 +231,7 @@ export function amplitudeDampingChannel(gamma) {
 }
 
 /**
- * Phase flip channel — models dephasing (T2 decay).
+ * Phase flip channel - models dephasing (T2 decay).
  *   K0 = √(1-p)·I,  K1 = √p·Z
  */
 export function phaseFlipChannel(p) {
@@ -256,7 +256,7 @@ export function phaseFlipChannel(p) {
 export function measureDM(rho, qubitIndex, nQubits) {
   const dim = 1 << nQubits;
 
-  // prob0 = Tr(P0 ρ) — sum diagonal where target bit = 0
+  // prob0 = Tr(P0 ρ) - sum diagonal where target bit = 0
   let prob0 = 0;
   for (let i = 0; i < dim; i++) {
     if (!((i >> qubitIndex) & 1)) prob0 += rho[i][i][0];
