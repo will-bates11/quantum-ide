@@ -96,7 +96,7 @@ function parseAngle(str) {
  * Parameter names in `params` map to local qubit indices (0-based position).
  * Returns an instruction object, or null on failure.
  */
-function parseGateBodyLine(raw, params, lineNum) {
+function parseGateBodyLine(raw, params, lineNum, customGates = {}) {
   const parts = raw.split(/\s+/);
   const op = parts[0];
 
@@ -161,6 +161,17 @@ function parseGateBodyLine(raw, params, lineNum) {
     return { type: "cswap", qubits: [c, t1, t2], line: lineNum };
   }
 
+  if (customGates[op]) {
+    const def = customGates[op];
+    const qubits = [];
+    for (let k = 0; k < def.params.length; k++) {
+      const q = resolve(parts[k + 1]);
+      if (q < 0) return null;
+      qubits.push(q);
+    }
+    return { type: "custom_gate", name: op, qubits, line: lineNum };
+  }
+
   return null;
 }
 
@@ -199,7 +210,7 @@ export function parse(code) {
         const bodyRaw = lines[i].trim();
         if (bodyRaw.toLowerCase() === "end") break;
         if (bodyRaw && !bodyRaw.startsWith("#") && !bodyRaw.startsWith("//")) {
-          const bodyInst = parseGateBodyLine(bodyRaw.toLowerCase(), params, i);
+          const bodyInst = parseGateBodyLine(bodyRaw.toLowerCase(), params, i, customGates);
           if (bodyInst) {
             body.push(bodyInst);
           } else {

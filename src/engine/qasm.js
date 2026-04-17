@@ -256,7 +256,7 @@ export function importFromQASM(qasmString) {
       if (headerM) {
         const gName    = headerM[1].toLowerCase();
         const qParams  = headerM[2].trim().split(/[\s,]+/).filter(Boolean).map(s => s.toLowerCase());
-        const inlineBody = (headerM[3] || '').trim();
+        const inlineBody = (headerM[3] || '').replace(/\s*\}.*$/, '').trim();
 
         // Collect body lines until the matching closing brace
         let depth = (raw.match(/\{/g) || []).length - (raw.match(/\}/g) || []).length;

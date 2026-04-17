@@ -140,6 +140,23 @@ describe('QASM import gate definition reconstruction', () => {
     assert.equal(errors.length, 0, `Parse errors: ${errors.map(e => e.msg).join(', ')}`);
   });
 
+  it('single-line gate definition is parsed correctly', () => {
+    const qasm = [
+      'OPENQASM 2.0;',
+      'include "qelib1.inc";',
+      'qreg q[1];',
+      'creg c[1];',
+      'gate flip q0 { x q0; }',
+      'flip q[0];',
+    ].join('\n');
+    const dsl = importFromQASM(qasm);
+    assert.ok(dsl.includes('gate flip'), `Gate definition missing:\n${dsl}`);
+    assert.ok(dsl.includes('x q0'), `Gate body missing:\n${dsl}`);
+    assert.ok(dsl.includes('flip 0'), `Gate call missing:\n${dsl}`);
+    const { errors } = parse(dsl);
+    assert.equal(errors.length, 0, `Parse errors: ${errors.map(e => e.msg).join(', ')}`);
+  });
+
   it('gate with unsupported body operations is silently skipped', () => {
     const qasm = [
       'OPENQASM 2.0;',

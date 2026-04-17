@@ -78,6 +78,27 @@ describe('Multi-shot statistics', () => {
       `Unexpected outcomes: ${keys.filter(k => k !== '00' && k !== '11')}`);
   });
 
+  it('last measurement wins when qubit is measured twice', () => {
+    // x 0 sets q0 to |1>; first measure records 1; x 0 flips q0 to |0>;
+    // second measure records 0; only the last value (0) appears in the bitstring
+    const code = [
+      'qubits 2',
+      'x 0',
+      'measure 0',
+      'x 0',
+      'h 1',
+      'measure 0',
+    ].join('\n');
+    const { counts } = parseAndRun(code, 200);
+    for (const key of Object.keys(counts)) {
+      assert.equal(key.length, 2, `Bitstring "${key}" is not 2 bits wide`);
+      assert.equal(key[0], '0', `q0 last-measurement should be 0, got bitstring "${key}"`);
+    }
+    // q1 was put in |+> and never measured - both values should appear across shots
+    const q1vals = new Set(Object.keys(counts).map(k => k[1]));
+    assert.ok(q1vals.has('0') && q1vals.has('1'), 'Unmeasured q1 (in |+>) should show both 0 and 1');
+  });
+
   it('explicit measure outcomes match full-circuit measure all', () => {
     // Using measure all vs explicit: both should give same keys
     const { counts: cExplicit } = parseAndRun('h 0\ncx 0 1\nmeasure all', 200);

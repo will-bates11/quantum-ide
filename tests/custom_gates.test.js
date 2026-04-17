@@ -149,6 +149,24 @@ describe('Custom gate - noisy simulation (density matrix)', () => {
     assert.ok(near(rho[2][2][0], 0));
   });
 
+  it('gate body calling another custom gate works in noisy mode', () => {
+    const code = [
+      'gate flip(q0):',
+      '  x q0',
+      'end',
+      'gate double_flip(q0):',
+      '  flip q0',
+      '  flip q0',
+      'end',
+      'x 0',
+      'double_flip 0',
+    ].join('\n');
+    // x 0 sets |1>, double_flip (flip;flip = identity) leaves it in |1>
+    const { densityMatrix: rho } = runNoisy(code, 0);
+    assert.ok(rho[1][1][0] > 0.99, `rho[1][1] = ${rho[1][1][0]}`);
+    assert.ok(rho[0][0][0] < 0.01, `rho[0][0] = ${rho[0][0][0]}`);
+  });
+
   it('nested custom gates work in noisy mode', () => {
     const code = [
       'gate flip(q0):',
