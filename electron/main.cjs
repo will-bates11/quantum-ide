@@ -22,7 +22,7 @@ function createWindow() {
       contextIsolation: true,
       // sandbox: true is safe here because preload.cjs only calls require('electron'),
       // which Electron exposes as a sandboxed polyfill. No Node.js built-in modules
-      // (fs, path, etc.) are used in the preload — all file I/O goes through IPC to main.
+      // (fs, path, etc.) are used in the preload - all file I/O goes through IPC to main.
       sandbox: true,
       preload: path.join(__dirname, 'preload.cjs'),
     },

@@ -1,5 +1,5 @@
 /**
- * Gate correctness tests — single-qubit, multi-qubit, controlled gates.
+ * Gate correctness tests - single-qubit, multi-qubit, controlled gates.
  *
  * Verifies that the state-vector simulator produces correct amplitudes
  * for each gate by comparing against known analytical results.

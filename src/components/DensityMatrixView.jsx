@@ -24,7 +24,7 @@ function ProbView({ probabilities, nQubits }) {
         marginBottom: 4,
         fontWeight: 600,
       }}>
-        DIAGONAL — {nQubits} qubit{nQubits > 1 ? 's' : ''}, {dim} basis states
+        DIAGONAL - {nQubits} qubit{nQubits > 1 ? 's' : ''}, {dim} basis states
       </div>
 
       {probabilities.map((prob, i) => {
@@ -116,7 +116,7 @@ function HeatmapView({ densityMatrix, dim, nQubits }) {
         fontFamily: 'monospace',
         fontWeight: 600,
       }}>
-        |ρ_ij| HEATMAP — {displayDim}×{displayDim}
+        |ρ_ij| HEATMAP - {displayDim}×{displayDim}
         {dim > 8 && <span style={{ color: T.text.disabled }}> (showing first 8×8)</span>}
       </div>
 

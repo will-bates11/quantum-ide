@@ -95,7 +95,7 @@ describe('Standard gate round-trips', () => {
   });
 });
 
-// ── QASM import — gate definition reconstruction ─────────────────────────────
+// ── QASM import - gate definition reconstruction ─────────────────────────────
 
 describe('QASM import gate definition reconstruction', () => {
   it('reconstructs a simple gate definition', () => {

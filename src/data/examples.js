@@ -37,7 +37,7 @@ h 2`,
 
   "Grover (2-qubit)": {
     description: "Grover's search algorithm finding |11⟩",
-    code: `# Grover's search — oracle marks |11⟩
+    code: `# Grover's search - oracle marks |11⟩
 qubits 2
 # Initialize superposition
 h 0
@@ -80,7 +80,7 @@ measure 1`,
   },
 
   "Phase Kickback": {
-    description: "Demonstrates phase kickback — key to many quantum algorithms",
+    description: "Demonstrates phase kickback - key to many quantum algorithms",
     code: `# Phase Kickback
 # The phase from the target kicks back to the control
 qubits 2
@@ -159,8 +159,8 @@ measure 2`,
   },
 
   "Toffoli (AND Gate)": {
-    description: "Toffoli (CCX): q2 flips only when both q0=1 and q1=1 — quantum AND",
-    code: `# Toffoli Gate — Quantum AND
+    description: "Toffoli (CCX): q2 flips only when both q0=1 and q1=1 - quantum AND",
+    code: `# Toffoli Gate - Quantum AND
 # q2 (ancilla, starts |0⟩) flips iff q0=1 AND q1=1
 qubits 3
 # Set both controls to |1⟩
@@ -172,14 +172,14 @@ ccx 0 1 2
 measure all`,
   },
 
-  "Bell State — Statistics": {
-    description: "Bell state with measurement statistics — set Shots to 1000 and Run",
-    code: `# Bell State — Measurement Statistics
+  "Bell State - Statistics": {
+    description: "Bell state with measurement statistics - set Shots to 1000 and Run",
+    code: `# Bell State - Measurement Statistics
 # ★  Set Shots to 1000 (or any N) and click Run to see the histogram!
 #
 # A Bell state produces |00⟩ and |11⟩ with exactly 50% probability each.
 # A single run gives one random outcome; many shots reveal the full
-# probability distribution — both bars should settle near 50%.
+# probability distribution - both bars should settle near 50%.
 qubits 2
 h 0        # Put q0 into equal superposition: (|0⟩ + |1⟩)/√2
 cx 0 1     # Entangle q1 with q0  →  (|00⟩ + |11⟩)/√2

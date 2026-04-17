@@ -1,5 +1,5 @@
 /**
- * Custom gate execution tests — single-level and nested custom gates,
+ * Custom gate execution tests - single-level and nested custom gates,
  * in both state-vector and noisy (density matrix) simulation modes.
  */
 
@@ -24,7 +24,7 @@ function runNoisy(code, strength = 0) {
 
 // ── State-vector custom gate execution ───────────────────────────────────────
 
-describe('Custom gate — state vector', () => {
+describe('Custom gate - state vector', () => {
   it('single-qubit custom gate applies correctly', () => {
     const code = [
       'gate flip(q0):',
@@ -92,7 +92,7 @@ describe('Custom gate — state vector', () => {
 
 // ── Nested custom gates ───────────────────────────────────────────────────────
 
-describe('Nested custom gates — state vector', () => {
+describe('Nested custom gates - state vector', () => {
   it('custom gate using another custom gate (nested call in body via expansion)', () => {
     // Parser stores body instructions by type; nested custom gate calls
     // inside a gate body are stored as custom_gate instructions and resolved
@@ -114,7 +114,7 @@ describe('Nested custom gates — state vector', () => {
 
 // ── Custom gate in noisy simulation ──────────────────────────────────────────
 
-describe('Custom gate — noisy simulation (density matrix)', () => {
+describe('Custom gate - noisy simulation (density matrix)', () => {
   it('does not reset to |0> state', () => {
     // Apply X to set |1>, then apply identity custom gate.
     // If the noisy path incorrectly reinitializes, rho[0][0] would be 1.

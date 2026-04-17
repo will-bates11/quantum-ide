@@ -79,14 +79,14 @@ export default function CodeEditor({ code, onChange, activeLine, errorLines }) {
       });
     }
 
-    // Prevent native textarea undo/redo — App's global handler owns history
+    // Prevent native textarea undo/redo - App's global handler owns history
     else if (e.ctrlKey && !e.shiftKey && e.key === 'z') {
       e.preventDefault();
-      // don't stopPropagation — let the window handler call handleUndo
+      // don't stopPropagation - let the window handler call handleUndo
     }
     else if (e.ctrlKey && ((!e.shiftKey && e.key === 'y') || (e.shiftKey && e.key === 'Z'))) {
       e.preventDefault();
-      // don't stopPropagation — let the window handler call handleRedo
+      // don't stopPropagation - let the window handler call handleRedo
     }
   }, [code, onChange]);
 

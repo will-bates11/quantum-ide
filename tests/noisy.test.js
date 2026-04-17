@@ -1,5 +1,5 @@
 /**
- * Noisy simulation tests — trace preservation, positivity, and density
+ * Noisy simulation tests - trace preservation, positivity, and density
  * matrix equivalence against reference circuits.
  *
  * A valid density matrix must satisfy:
@@ -133,7 +133,7 @@ describe('CS and CT gates in noisy mode', () => {
 
 describe('Custom gate in noisy mode', () => {
   it('custom gate does not reset state', () => {
-    // Apply X then a custom gate that does nothing (identity) — state should remain |1>
+    // Apply X then a custom gate that does nothing (identity) - state should remain |1>
     const code = [
       'gate ident(q0):',
       '  x q0',

@@ -1,5 +1,5 @@
 /**
- * Quantum IDE — Design Tokens
+ * Quantum IDE - Design Tokens
  *
  * Single source of truth for all visual values.
  * Import `T` wherever you need a color, spacing, radius, or type value.

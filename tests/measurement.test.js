@@ -1,5 +1,5 @@
 /**
- * Measurement tests — Born rule, state collapse, normalization.
+ * Measurement tests - Born rule, state collapse, normalization.
  */
 
 import { describe, it } from 'node:test';
@@ -43,7 +43,7 @@ describe('State collapse after measurement', () => {
   it('collapses to |0> sub-space', () => {
     // Prepare |+> = (|0>+|1>)/sqrt(2), measure, force outcome 0
     const sup = applySingleQubitGate(createState(1), FIXED_GATES.h, 0, 1);
-    // Run many times — at least one outcome=0 expected; check that state collapses correctly
+    // Run many times - at least one outcome=0 expected; check that state collapses correctly
     let gotZero = false;
     for (let t = 0; t < 100; t++) {
       const { state: collapsed, outcome } = measureQubit(sup, 0, 1);

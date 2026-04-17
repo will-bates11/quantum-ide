@@ -7,7 +7,7 @@
  *   Array of 2^n complex amplitudes, where n = number of qubits.
  *   Each amplitude is a [real, imag] tuple.
  *
- *   QUBIT ORDERING — LITTLE-ENDIAN:
+ *   QUBIT ORDERING - LITTLE-ENDIAN:
  *   Qubit 0 is the LEAST significant bit of the basis state index.
  *   So basis state |index⟩ has qubit k = (index >> k) & 1.
  *   Example (2 qubits): state[0]=|00⟩, state[1]=|10⟩, state[2]=|01⟩, state[3]=|11⟩
@@ -21,7 +21,7 @@
  *   of O(2^(2n)) for full matrix multiplication.
  *
  * Measurement:
- *   Born rule — probability of outcome is sum of |amplitude|^2 for all
+ *   Born rule - probability of outcome is sum of |amplitude|^2 for all
  *   basis states consistent with that outcome. State collapses and
  *   renormalizes after measurement.
  */
@@ -410,7 +410,7 @@ export function runMultiShot(instructions, nQubits, shots, customGates = {}) {
 
     let bitstring;
     if (result.measurements.length === 0) {
-      // No explicit measurements — sample from the final state vector
+      // No explicit measurements - sample from the final state vector
       const { outcomes } = measureAll(result.state, nQubits);
       bitstring = outcomes.map(m => m.outcome).join('');
     } else {

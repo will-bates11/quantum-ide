@@ -1,8 +1,8 @@
 /**
  * OpenQASM 2.0 Import / Export
  *
- * exportToQASM — converts parsed DSL instructions -> valid QASM string
- * importFromQASM — converts QASM string -> DSL source text
+ * exportToQASM - converts parsed DSL instructions -> valid QASM string
+ * importFromQASM - converts QASM string -> DSL source text
  *
  * CS (controlled-S) and CT (controlled-T) are not in the standard qelib1.inc
  * gate set, so they are exported as equivalent gate sequences using only
@@ -249,7 +249,7 @@ export function importFromQASM(qasmString) {
     if (raw.startsWith('include'))  continue;
     if (raw.startsWith('creg'))     continue;
 
-    // Gate definition blocks — try to reconstruct as DSL custom gates
+    // Gate definition blocks - try to reconstruct as DSL custom gates
     if (/^gate\b/.test(raw)) {
       // Parse: gate Name[(classical_params)] q0, q1, ... { body }
       const headerM = raw.match(/^gate\s+(\w+)\s*(?:\([^)]*\))?\s+([^{]+?)\s*(?:\{(.*))?$/);
@@ -295,7 +295,7 @@ export function importFromQASM(qasmString) {
           definedGates.add(gName);
         }
       } else {
-        // Can't parse the gate header — skip the block
+        // Can't parse the gate header - skip the block
         let depth = (raw.match(/\{/g) || []).length - (raw.match(/\}/g) || []).length;
         while (depth > 0 && i < qasmLines.length) {
           const bl = qasmLines[i].trim();

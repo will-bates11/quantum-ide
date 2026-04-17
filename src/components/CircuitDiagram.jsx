@@ -593,7 +593,7 @@ function CircuitDiagram({ instructions, nQubits, currentStep, onGateDrop, onGate
           />
         )}
 
-        {/* Drop zones — one per (qubit, column) cell */}
+        {/* Drop zones - one per (qubit, column) cell */}
         {onGateDrop && Array.from({ length: nQubits }, (_, q) =>
           Array.from({ length: effectiveCols }, (_, col) => (
             <foreignObject
