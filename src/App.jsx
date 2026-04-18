@@ -134,6 +134,19 @@ export default function App() {
     window.electronAPI.setTitle(`${isDirty ? '● ' : ''}${name} - Quantum IDE`);
   }, [currentFilePath, isDirty]);
 
+  // ── Unsaved-changes guard on window/app close ──
+  useEffect(() => {
+    window.onbeforeunload = isDirty
+      ? () => 'You have unsaved changes. Quit anyway?'
+      : null;
+    return () => { window.onbeforeunload = null; };
+  }, [isDirty]);
+
+  const confirmDiscard = useCallback(() => {
+    if (!isDirty) return true;
+    return window.confirm('Discard unsaved changes?');
+  }, [isDirty]);
+
   // ── Simulator actions ──
 
   const handleRun = useCallback(() => {
@@ -235,39 +248,37 @@ export default function App() {
     const gates = getGateInstructions(instructions);
     setGateInstructions(gates);
 
-    setStepIndex(prev => {
-      const nextIdx = prev === null ? 0 : prev + 1;
+    const nextIdx = stepIndex === null ? 0 : stepIndex + 1;
 
-      if (nextIdx >= gates.length) {
-        setLog(p => [...p, "✓ End of program reached."]);
-        return prev;
-      }
+    if (nextIdx >= gates.length) {
+      setLog(p => [...p, "✓ End of program reached."]);
+      return;
+    }
 
-      let s, m;
-      if (nextIdx === 0) {
-        s = createState(nQ);
-        m = [];
-        setNQubits(nQ);
-        setLog(["⏩ Stepping through program..."]);
-      } else {
-        s = stateRef.current;
-        m = measRef.current;
-      }
+    let s, m;
+    if (nextIdx === 0) {
+      s = createState(nQ);
+      m = [];
+      setNQubits(nQ);
+      setLog(["⏩ Stepping through program..."]);
+    } else {
+      s = stateRef.current;
+      m = measRef.current;
+    }
 
-      const inst = gates[nextIdx];
-      const result = executeInstruction(inst, s, nQ, m, customGates);
+    const inst = gates[nextIdx];
+    const result = executeInstruction(inst, s, nQ, m, customGates);
 
-      setState(result.state);
-      setMeasurements(result.measurements);
-      stateRef.current = result.state;
-      measRef.current = result.measurements;
+    setState(result.state);
+    setMeasurements(result.measurements);
+    stateRef.current = result.state;
+    measRef.current = result.measurements;
 
-      const desc = formatInstruction(inst);
-      setLog(p => [...p, `Step ${nextIdx + 1}/${gates.length}: ${desc}`]);
+    const desc = formatInstruction(inst);
+    setLog(p => [...p, `Step ${nextIdx + 1}/${gates.length}: ${desc}`]);
 
-      return nextIdx;
-    });
-  }, [code]);
+    setStepIndex(nextIdx);
+  }, [code, stepIndex]);
 
   const handleReset = useCallback(() => {
     setState(null);
@@ -286,6 +297,7 @@ export default function App() {
 
   const handleLoadExample = useCallback((name) => {
     if (EXAMPLES[name]) {
+      if (!confirmDiscard()) return;
       const newCode = EXAMPLES[name].code;
       setCode(newCode);
       setCurrentFilePath(null);
@@ -296,12 +308,13 @@ export default function App() {
       setCanRedo(false);
       handleReset();
     }
-  }, [handleReset]);
+  }, [handleReset, confirmDiscard]);
 
   // ── File I/O actions ──
 
   const handleOpen = useCallback(async () => {
     if (!window.electronAPI) return;
+    if (!confirmDiscard()) return;
     const result = await window.electronAPI.openFile();
     if (!result || result.error) return;
     setCode(result.content);
@@ -313,7 +326,7 @@ export default function App() {
     setCanRedo(false);
     handleReset();
     setLog([`📂 Opened: ${result.filePath.split(/[\\/]/).pop()}`]);
-  }, [handleReset]);
+  }, [handleReset, confirmDiscard]);
 
   const handleSave = useCallback(async () => {
     if (!window.electronAPI) return;
@@ -374,6 +387,7 @@ export default function App() {
   }, [code]);
 
   const handleImportQASM = useCallback(() => {
+    if (!confirmDiscard()) return;
     const doImport = (content) => {
       const dslCode = importFromQASM(content);
       setCode(dslCode);
@@ -408,7 +422,7 @@ export default function App() {
       };
       input.click();
     }
-  }, [handleReset]);
+  }, [handleReset, confirmDiscard]);
 
   // ── Drag-and-drop gate insertion ──
 
@@ -465,13 +479,22 @@ export default function App() {
     pushHistory(newCode);
   }, [code, gateInstructions, pushHistory]);
 
-  const handleGateDropAngle = useCallback((gateName, qubitIndex, angle) => {
+  const handleGateDropAngle = useCallback((gateName, qubitIndex, angle, colIndex) => {
     const dslLine = `${gateName.toUpperCase()} ${angle} ${qubitIndex}`;
-    const newCode = code.trimEnd() + '\n' + dslLine;
+    const lines = code.split('\n');
+    const insertAfterLine = colIndex !== undefined && colIndex < gateInstructions.length
+      ? gateInstructions[colIndex].line
+      : lines.length - 1;
+    const newLines = [
+      ...lines.slice(0, insertAfterLine + 1),
+      dslLine,
+      ...lines.slice(insertAfterLine + 1),
+    ];
+    const newCode = newLines.join('\n');
     setCode(newCode);
     setIsDirty(true);
     pushHistory(newCode);
-  }, [code, pushHistory]);
+  }, [code, gateInstructions, pushHistory]);
 
   // ── Keyboard shortcuts ──
 

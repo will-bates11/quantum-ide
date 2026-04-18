@@ -7,6 +7,11 @@ const fs = require('fs');
 const isDev = process.argv.includes('--dev');
 const DEV_SERVER_URL = 'http://localhost:3000';
 
+// Tracks file paths that the main process has returned from native dialogs.
+// dialog:saveFile may only write to paths in this set, preventing a
+// compromised renderer from writing to arbitrary locations.
+const trustedFilePaths = new Set();
+
 // ── Window creation ───────────────────────────────────────────────────────────
 
 function createWindow() {
@@ -75,6 +80,7 @@ ipcMain.handle('dialog:openFile', async (event) => {
   if (result.canceled || !result.filePaths.length) return null;
 
   const filePath = result.filePaths[0];
+  trustedFilePaths.add(filePath);
   try {
     const content = fs.readFileSync(filePath, 'utf-8');
     return { filePath, content };
@@ -86,6 +92,9 @@ ipcMain.handle('dialog:openFile', async (event) => {
 // ── IPC: File save (to known path) ────────────────────────────────────────────
 
 ipcMain.handle('dialog:saveFile', async (_event, content, filePath) => {
+  if (!trustedFilePaths.has(filePath)) {
+    return { success: false, error: 'Path not authorized for writing.' };
+  }
   try {
     fs.writeFileSync(filePath, content, 'utf-8');
     return { success: true, filePath };
@@ -110,6 +119,7 @@ ipcMain.handle('dialog:saveFileAs', async (event, content) => {
 
   if (result.canceled || !result.filePath) return null;
 
+  trustedFilePaths.add(result.filePath);
   try {
     fs.writeFileSync(result.filePath, content, 'utf-8');
     return { success: true, filePath: result.filePath };
@@ -134,6 +144,7 @@ ipcMain.handle('save-file', async (event, content, defaultName) => {
 
   if (result.canceled || !result.filePath) return null;
 
+  trustedFilePaths.add(result.filePath);
   try {
     fs.writeFileSync(result.filePath, content, 'utf-8');
     return { success: true, filePath: result.filePath };
