@@ -76,7 +76,13 @@ cx 1 2
 cx 0 1
 h 0
 measure 0
-measure 1`,
+measure 1
+# NOTE: Classical feed-forward is not yet supported in this IDE.
+# In a full implementation, the corrections below are applied to q2
+# conditioned on the measurement outcomes above:
+#   if measure 1 == 1: x 2
+#   if measure 0 == 1: z 2
+# Without these corrections the circuit is illustrative only.`,
   },
 
   "Phase Kickback": {
@@ -129,14 +135,16 @@ measure 0`,
     description: "2-qubit QFT circuit",
     code: `# Quantum Fourier Transform (2-qubit)
 qubits 2
-# Start with a test state
+# Start with a test state: |10>
 x 0
 # QFT circuit
+# Step 1: Hadamard on q0
 h 0
-# Controlled-S (decomposed)
-s 0
-# Swap outputs
+# Step 2: Controlled-S (control=q1, target=q0)
+cs 1 0
+# Step 3: Bit-reversal swap
 swap 0 1
+# Step 4: Hadamard on q1
 h 1`,
   },
 

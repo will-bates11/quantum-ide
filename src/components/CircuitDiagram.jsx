@@ -364,7 +364,7 @@ function CircuitDiagram({ instructions, nQubits, currentStep, onGateDrop, onGate
 
   const handleAngleConfirm = useCallback(() => {
     if (!pendingAngle) return;
-    if (onGateDropAngle) onGateDropAngle(pendingAngle.gate, pendingAngle.qubitIndex, angleInput);
+    if (onGateDropAngle) onGateDropAngle(pendingAngle.gate, pendingAngle.qubitIndex, angleInput, pendingAngle.colIndex);
     setPendingAngle(null);
   }, [pendingAngle, angleInput, onGateDropAngle]);
 

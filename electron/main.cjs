@@ -7,6 +7,20 @@ const fs = require('fs');
 const isDev = process.argv.includes('--dev');
 const DEV_SERVER_URL = 'http://localhost:3000';
 
+// Tracks file paths per window that the main process has returned from native dialogs.
+// dialog:saveFile may only write to paths in the sender window's set, preventing a
+// compromised renderer from writing to arbitrary locations.
+// Scoped per WebContents id so paths from one window cannot bleed into another,
+// and cleaned up when the window closes to avoid unbounded growth.
+const trustedFilePathsByWindow = new Map();
+
+function getTrustedPaths(webContentsId) {
+  if (!trustedFilePathsByWindow.has(webContentsId)) {
+    trustedFilePathsByWindow.set(webContentsId, new Set());
+  }
+  return trustedFilePathsByWindow.get(webContentsId);
+}
+
 // ── Window creation ───────────────────────────────────────────────────────────
 
 function createWindow() {
@@ -30,7 +44,9 @@ function createWindow() {
     show: false,
   });
 
+  const wcId = win.webContents.id;
   win.once('ready-to-show', () => win.show());
+  win.on('closed', () => trustedFilePathsByWindow.delete(wcId));
 
   if (isDev) {
     win.loadURL(DEV_SERVER_URL);
@@ -75,6 +91,7 @@ ipcMain.handle('dialog:openFile', async (event) => {
   if (result.canceled || !result.filePaths.length) return null;
 
   const filePath = result.filePaths[0];
+  getTrustedPaths(event.sender.id).add(filePath);
   try {
     const content = fs.readFileSync(filePath, 'utf-8');
     return { filePath, content };
@@ -85,7 +102,10 @@ ipcMain.handle('dialog:openFile', async (event) => {
 
 // ── IPC: File save (to known path) ────────────────────────────────────────────
 
-ipcMain.handle('dialog:saveFile', async (_event, content, filePath) => {
+ipcMain.handle('dialog:saveFile', async (event, content, filePath) => {
+  if (!getTrustedPaths(event.sender.id).has(filePath)) {
+    return { success: false, error: 'Path not authorized for writing.' };
+  }
   try {
     fs.writeFileSync(filePath, content, 'utf-8');
     return { success: true, filePath };
@@ -110,6 +130,7 @@ ipcMain.handle('dialog:saveFileAs', async (event, content) => {
 
   if (result.canceled || !result.filePath) return null;
 
+  getTrustedPaths(event.sender.id).add(result.filePath);
   try {
     fs.writeFileSync(result.filePath, content, 'utf-8');
     return { success: true, filePath: result.filePath };
@@ -134,6 +155,7 @@ ipcMain.handle('save-file', async (event, content, defaultName) => {
 
   if (result.canceled || !result.filePath) return null;
 
+  getTrustedPaths(event.sender.id).add(result.filePath);
   try {
     fs.writeFileSync(result.filePath, content, 'utf-8');
     return { success: true, filePath: result.filePath };
